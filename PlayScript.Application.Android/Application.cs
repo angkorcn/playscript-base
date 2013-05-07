@@ -2,7 +2,7 @@ using System;
 
 namespace Playscript.Application
 {
-	public class Application
+	public static class Application
 	{
 		/// <summary>
 		/// Does platform specific setup, creates a window, and runs the PlayScript main loop

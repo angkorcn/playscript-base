@@ -7,7 +7,7 @@ using MonoTouch.UIKit;
 
 namespace PlayScript.Application
 {
-	public class Application
+	public static class Application
 	{
 		/// <summary>
 		/// Does platform specific setup, creates a window, and runs the PlayScript main loop
