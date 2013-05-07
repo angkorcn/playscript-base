@@ -1,6 +1,6 @@
 using System;
 
-namespace Playscript.Application
+namespace playscript
 {
 	public static class Application
 	{
@@ -9,7 +9,7 @@ namespace Playscript.Application
 		/// </summary>
 		/// <param name="args">Command line arguments</param>
 		/// <param name="loadClass">Type of class to load and run (should be derived from flash.display.Sprite)</param>
-		public static void Run(string[] args = null, System.Type loadClass = null)
+		public static void run(string[] args = null, System.Type loadClass = null)
 		{
 			throw new NotImplementedException("TODO: Android");
 		}

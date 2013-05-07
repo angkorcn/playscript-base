@@ -4,7 +4,7 @@ using MonoMac.Foundation;
 using MonoMac.AppKit;
 using MonoMac.ObjCRuntime;
 
-namespace PlayScript.Application
+namespace playscript
 {
 	public static class Application
 	{
@@ -13,7 +13,7 @@ namespace PlayScript.Application
 		/// </summary>
 		/// <param name="args">Command line arguments</param>
 		/// <param name="loadClass">Type of class to load and run (should be derived from flash.display.Sprite)</param>
-		public static void Run(string[] args = null, System.Type loadClass = null)
+		public static void run(string[] args = null, System.Type loadClass = null)
 		{
 			// set class to be loaded
 			PlayScript.Application.OSX.MainWindowController.LoadClass = loadClass;
