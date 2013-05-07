@@ -39,7 +39,7 @@
 			<object class="NSWindowTemplate" id="748157544">
 				<int key="NSWindowStyleMask">15</int>
 				<int key="NSWindowBacking">2</int>
-				<string key="NSWindowRect">{{131, 74}, {606, 354}}</string>
+				<string key="NSWindowRect">{{131, 74}, {320, 480}}</string>
 				<int key="NSWTFlags">611844096</int>
 				<string key="NSWindowTitle">PlayScriptMonoMac</string>
 				<string key="NSWindowClass">MainWindow</string>
@@ -53,14 +53,14 @@
 						<object class="NSCustomView" id="729758953">
 							<reference key="NSNextResponder" ref="312036702"/>
 							<int key="NSvFlags">286</int>
-							<string key="NSFrameSize">{606, 354}</string>
+							<string key="NSFrameSize">{320, 480}</string>
 							<reference key="NSSuperview" ref="312036702"/>
 							<reference key="NSWindow"/>
 							<reference key="NSNextKeyView"/>
 							<string key="NSClassName">MyOpenGLView</string>
 						</object>
 					</object>
-					<string key="NSFrameSize">{606, 354}</string>
+					<string key="NSFrameSize">{320, 480}</string>
 					<reference key="NSSuperview"/>
 					<reference key="NSWindow"/>
 					<reference key="NSNextKeyView" ref="729758953"/>
