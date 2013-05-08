@@ -66,9 +66,5 @@ namespace PlayScript.Application.iOS
 			View.StopAnimating ();
 		}
 		
-		public override void ViewDidUnload ()
-		{
-			base.ViewDidUnload ();
-		}
 	}
 }
