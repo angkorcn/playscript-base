@@ -150,9 +150,12 @@ namespace PlayScript.Application.OSX
 			player.OnScrollWheel(GetLocationForEvent(theEvent), theEvent.DeltaY);
 		}
 
+		private int mFrameCount = 0;
 
 		private void DrawView ()
 		{
+			NSApplication.EnsureUIThread();
+			
 			// This method will be called on both the main thread (through -drawRect:) and a secondary thread (through the display link rendering loop)
 			// Also, when resizing the view, -reshape is called on the main thread, but we may be drawing on a secondary thread
 			// Add a mutex around to avoid the threads accessing the context simultaneously 
@@ -160,6 +163,13 @@ namespace PlayScript.Application.OSX
 			
 			// Make sure we draw to the right context
 			openGLContext.MakeCurrentContext ();
+
+//			if (mFrameCount == 0) 
+			{
+				// clear the framebuffer to prevent garbage frames
+				GL.ClearColor (0.2f,0.2f,0.2f, 0.0f);
+				GL.Clear (ClearBufferMask.ColorBufferBit | ClearBufferMask.DepthBufferBit | ClearBufferMask.StencilBufferBit);
+			}
 			
 			// Delegate to the scene object for rendering
 			player.OnFrame();
@@ -167,6 +177,8 @@ namespace PlayScript.Application.OSX
 			openGLContext.FlushBuffer ();
 			
 			openGLContext.CGLContext.Unlock ();
+
+			mFrameCount++;
 		}
 
 
@@ -187,27 +199,12 @@ namespace PlayScript.Application.OSX
 
 		public CVReturn MyDisplayLinkOutputCallback (CVDisplayLink displayLink, ref CVTimeStamp inNow, ref CVTimeStamp inOutputTime, CVOptionFlags flagsIn, ref CVOptionFlags flagsOut)
 		{
-			CVTimeStamp time = inOutputTime;
-			this.InvokeOnMainThread( () =>  {GetFrameForTime (time);} );
-         	
-			return CVReturn.Success;
-		}
-
-
-		private CVReturn GetFrameForTime (CVTimeStamp outputTime)
-		{
-			NSApplication.EnsureUIThread();
-
 			// There is no autorelease pool when this method is called because it will be called from a background thread
 			// It's important to create one or you will leak objects
 			using (NSAutoreleasePool pool = new NSAutoreleasePool ()) {
-				
-				// Update the animation
-				DrawView ();
+				this.InvokeOnMainThread( () =>  {DrawView();} );
+				return CVReturn.Success;
 			}
-			
-			return CVReturn.Success;
-			
 		}
 
 		public NSOpenGLContext OpenGLContext {
@@ -224,6 +221,8 @@ namespace PlayScript.Application.OSX
 
 		public void UpdateView ()
 		{
+			NSApplication.EnsureUIThread();
+			
 			// This method will be called on the main thread when resizing, but we may be drawing on a secondary thread through the display link
 			// Add a mutex around to avoid the threads accessing the context simultaneously
 			openGLContext.CGLContext.Lock ();
@@ -244,9 +243,6 @@ namespace PlayScript.Application.OSX
 		{
 			if (displayLink != null && !displayLink.IsRunning)
 				displayLink.Start ();
-
-			// draw view immediately to fix garbage frame
-			DrawView ();
 		}
 
 		public void StopAnimation ()
