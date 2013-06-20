@@ -25,6 +25,7 @@ namespace PlayScript.Application.iOS
 		[Export("initWithCoder:")]
 		public EAGLView (NSCoder coder) : base (coder)
 		{
+			AutoResize = true;
 			LayerRetainsBacking = true;
 			LayerColorFormat = EAGLColorFormat.RGBA8;
 		}
@@ -38,6 +39,8 @@ namespace PlayScript.Application.iOS
 		protected override void ConfigureLayer (CAEAGLLayer eaglLayer)
 		{
 			eaglLayer.Opaque = true;
+
+			eaglLayer.ContentsScale = 1.0f; // UIScreen.MainScreen.Scale;
 		}
 		
 		protected override void CreateFrameBuffer ()
@@ -138,10 +141,26 @@ namespace PlayScript.Application.iOS
 		
 		#endregion
 
+		private System.Drawing.RectangleF GetScaledFrame()
+		{
+			var scale = this.Layer.ContentsScale;
+			var rect = this.Bounds;
+			rect.X      *= scale;
+			rect.Y      *= scale;
+			rect.Width  *= scale;
+			rect.Height *= scale;
+
+//			int width, height;
+//			GL.GetRenderbufferParameter(RenderbufferTarget.Renderbuffer, RenderbufferParameterName.RenderbufferWidth, out width);
+//			GL.GetRenderbufferParameter(RenderbufferTarget.Renderbuffer, RenderbufferParameterName.RenderbufferHeight, out height);
+			return rect;
+		}
+
 		protected void InitPlayer()
 		{
 			// create player
-			mPlayer = new PlayScript.Player(this.Frame);
+			var rect = GetScaledFrame();
+			mPlayer = new PlayScript.Player(rect);
 
 			// load swf application
 			if (LoadClass != null) {
@@ -156,11 +175,14 @@ namespace PlayScript.Application.iOS
 			MakeCurrent ();
 
 			if (mPlayer != null) {
+				// resize player every frame
+				var rect = GetScaledFrame();
+				mPlayer.OnResize(rect);
+
 				mPlayer.OnFrame();
 			}
 
 			SwapBuffers ();
 		}
-
 	}
 }
