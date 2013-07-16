@@ -40,7 +40,13 @@ namespace PlayScript.Application.iOS
 		{
 			eaglLayer.Opaque = true;
 
-			eaglLayer.ContentsScale = 1.0f; // UIScreen.MainScreen.Scale;
+			if (this.Frame.Width <= 480.0 || this.Frame.Height <= 480.0) {
+				eaglLayer.ContentsScale = 2.0f; // UIScreen.MainScreen.Scale;
+			} else {
+				eaglLayer.ContentsScale = 1.0f; // UIScreen.MainScreen.Scale;
+			}	
+
+			Console.WriteLine("context scale for frame {0} set to {1}", this.Frame, eaglLayer.ContentsScale);
 		}
 		
 		protected override void CreateFrameBuffer ()
@@ -150,14 +156,16 @@ namespace PlayScript.Application.iOS
 			rect.Width  *= scale;
 			rect.Height *= scale;
 
-//			int width, height;
-//			GL.GetRenderbufferParameter(RenderbufferTarget.Renderbuffer, RenderbufferParameterName.RenderbufferWidth, out width);
-//			GL.GetRenderbufferParameter(RenderbufferTarget.Renderbuffer, RenderbufferParameterName.RenderbufferHeight, out height);
+			int width, height;
+			GL.GetRenderbufferParameter(RenderbufferTarget.Renderbuffer, RenderbufferParameterName.RenderbufferWidth, out width);
+			GL.GetRenderbufferParameter(RenderbufferTarget.Renderbuffer, RenderbufferParameterName.RenderbufferHeight, out height);
 			return rect;
 		}
 
 		protected void InitPlayer()
 		{
+			flash.display3D.Context3D.OnPresent = this.OnPresent;
+
 			// create player
 			var rect = GetScaledFrame();
 			mPlayer = new PlayScript.Player(rect);
@@ -168,11 +176,20 @@ namespace PlayScript.Application.iOS
 			}
 		}
 
+		private bool mPresent = false;
+		protected void OnPresent(flash.display3D.Context3D context)
+		{
+			mPresent = true;
+//			SwapBuffers ();			
+		}
+
 		protected override void OnRenderFrame (FrameEventArgs e)
 		{
 			base.OnRenderFrame (e);
 			
 			MakeCurrent ();
+
+			mPresent = false;
 
 			if (mPlayer != null) {
 				// resize player every frame
@@ -182,7 +199,11 @@ namespace PlayScript.Application.iOS
 				mPlayer.OnFrame();
 			}
 
-			SwapBuffers ();
+			if (mPresent == true) {
+				PlayScript.Profiler.Begin("swap");
+				SwapBuffers ();
+				PlayScript.Profiler.End("swap");
+			}
 		}
 	}
 }
