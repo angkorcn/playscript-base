@@ -17,8 +17,6 @@ namespace PlayScript.Application.iOS
 	[Register ("EAGLView")]
 	public class EAGLView : iPhoneOSGameView
 	{
-		public static System.Type LoadClass;
-
 		// this is our playscript player
 		PlayScript.Player      mPlayer;
 
@@ -173,11 +171,6 @@ namespace PlayScript.Application.iOS
 			// create player
 			var rect = GetScaledFrame();
 			mPlayer = new PlayScript.Player(rect);
-
-			// load swf application
-			if (LoadClass != null) {
-				mPlayer.LoadClass(LoadClass);
-			}
 		}
 
 		private bool mPresent = false;
@@ -198,9 +191,7 @@ namespace PlayScript.Application.iOS
 			if (mPlayer != null) {
 				// resize player every frame
 				var rect = GetScaledFrame();
-				mPlayer.OnResize(rect);
-
-				mPlayer.OnFrame();
+				mPlayer.OnFrame(rect);
 			}
 
 			if (mPresent == true) {

@@ -15,10 +15,14 @@ namespace playscript
 		/// <param name="loadClass">Type of class to load and run (should be derived from flash.display.Sprite)</param>
 		public static void run(string[] args = null, System.Type loadClass = null)
 		{
-			// set class to be loaded
-			PlayScript.Application.OSX.MainWindowController.LoadClass = loadClass;
-
 			NSApplication.Init ();
+
+			// set class to be loaded
+			PlayScript.Player.ApplicationClass = loadClass;
+			PlayScript.Player.ApplicationArgs  = args;
+			PlayScript.Player.ApplicationLoadDelay  = 60;
+
+
 			NSApplication.Main (args);
 		}
 	}

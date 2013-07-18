@@ -80,15 +80,18 @@ namespace PlayScript.Application.OSX
 			openGLContext = new NSOpenGLContext (pixelFormat, context);
 			
 			openGLContext.MakeCurrentContext ();
-			
+
+			// Allocate the Player object
+			player = new PlayScript.Player (this.Bounds);
+
 			// Synchronize buffer swaps with vertical refresh rate
 			openGLContext.SwapInterval = true;
 
 			SetupDisplayLink();
-			
+
 			// Look for changes in view size
 			// Note, -reshape will not be called automatically on size changes because NSView does not export it to override 
-			//notificationProxy = NSNotificationCenter.DefaultCenter.AddObserver (NSView.NSViewGlobalFrameDidChangeNotification, HandleReshape);
+			notificationProxy = NSNotificationCenter.DefaultCenter.AddObserver (NSView.NSViewGlobalFrameDidChangeNotification, HandleReshape);
 		}
 
 		public override void DrawRect (RectangleF dirtyRect)
@@ -151,8 +154,6 @@ namespace PlayScript.Application.OSX
 			player.OnScrollWheel(GetLocationForEvent(theEvent), theEvent.DeltaY);
 		}
 
-		private int mFrameCount = 0;
-
 		private void DrawView ()
 		{
 			NSApplication.EnsureUIThread();
@@ -162,9 +163,9 @@ namespace PlayScript.Application.OSX
 			// Add a mutex around to avoid the threads accessing the context simultaneously 
 			openGLContext.CGLContext.Lock ();
 
+			// resize context as appropriate
 			if (!Bounds.Equals(previousBounds))
 			{
-				player.OnResize(Bounds);
 				openGLContext.Update ();
 				previousBounds = Bounds;
 			}
@@ -172,21 +173,16 @@ namespace PlayScript.Application.OSX
 			// Make sure we draw to the right context
 			openGLContext.MakeCurrentContext ();
 
-//			if (mFrameCount == 0) 
-			{
-				// clear the framebuffer to prevent garbage frames
-				GL.ClearColor (0.2f,0.2f,0.2f, 0.0f);
-				GL.Clear (ClearBufferMask.ColorBufferBit | ClearBufferMask.DepthBufferBit | ClearBufferMask.StencilBufferBit);
-			}
-			
+			// clear the framebuffer to prevent garbage frames
+			GL.ClearColor (0.2f,0.2f,0.2f, 0.0f);
+			GL.Clear (ClearBufferMask.ColorBufferBit | ClearBufferMask.DepthBufferBit | ClearBufferMask.StencilBufferBit);
+
 			// Delegate to the scene object for rendering
-			player.OnFrame();
+			player.OnFrame(Bounds);
 			
 			openGLContext.FlushBuffer ();
 			
 			openGLContext.CGLContext.Unlock ();
-
-			mFrameCount++;
 		}
 
 
@@ -223,10 +219,6 @@ namespace PlayScript.Application.OSX
 			get { return pixelFormat; }
 		}
 
-		public Player Player {
-			set { player = value; }
-		}
-
 		public void UpdateView ()
 		{
 			NSApplication.EnsureUIThread();
@@ -236,7 +228,6 @@ namespace PlayScript.Application.OSX
 			openGLContext.CGLContext.Lock ();
 			
 			// Delegate to the scene object to update for a change in the view size
-			player.OnResize(Bounds);
 			openGLContext.Update ();
 			
 			openGLContext.CGLContext.Unlock ();

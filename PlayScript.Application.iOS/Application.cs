@@ -17,7 +17,9 @@ namespace playscript
 		public static void run(string[] args = null, System.Type loadClass = null)
 		{
 			// set class to be loaded by application
-			PlayScript.Application.iOS.EAGLView.LoadClass = loadClass;
+			PlayScript.Player.ApplicationClass = loadClass;
+			PlayScript.Player.ApplicationArgs  = args;
+			PlayScript.Player.ApplicationLoadDelay  = 0;
 
 			// if you want to use a different Application Delegate class from "AppDelegate"
 			// you can specify it here.
