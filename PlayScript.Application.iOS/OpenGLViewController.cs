@@ -37,6 +37,8 @@ namespace PlayScript.Application.iOS
 				if (IsViewLoaded && View.Window != null)
 					View.StopAnimating ();
 			}, this);
+
+			SetupPinchGestureRecognizer();
 		}
 		
 		protected override void Dispose (bool disposing)
@@ -65,6 +67,20 @@ namespace PlayScript.Application.iOS
 			base.ViewWillDisappear (animated);
 			View.StopAnimating ();
 		}
-		
+
+		private void OnPinchRecongnized(UIPinchGestureRecognizer pinchRecognizer)
+		{
+			View.OnPinchRecognized(pinchRecognizer);
+		}
+
+		private void SetupPinchGestureRecognizer()
+		{
+			// create a new pinch gesture
+			UIPinchGestureRecognizer gesture = new UIPinchGestureRecognizer ();
+			// wire up the event handler (have to use a selector)
+			gesture.AddTarget ( () => { OnPinchRecongnized(gesture); });
+			// add the gesture recognizer to the view
+			View.AddGestureRecognizer(gesture);
+		}
 	}
 }

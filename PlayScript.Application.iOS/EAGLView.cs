@@ -86,6 +86,10 @@ namespace PlayScript.Application.iOS
 			mPlayer.OnTouchesEnded(touches, evt);
 		}
 
+		public void OnPinchRecognized(UIPinchGestureRecognizer pinchRecognizer)
+		{
+			mPlayer.OnPinchRecognized(pinchRecognizer);
+		}
 
 		
 		#region DisplayLink support

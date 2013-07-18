@@ -1,6 +1,7 @@
 using System;
 using MonoMac.Foundation;
 using MonoMac.AppKit;
+using System.Drawing;
 
 namespace PlayScript.Application.OSX
 {
@@ -13,6 +14,12 @@ namespace PlayScript.Application.OSX
                 public MainWindow (NSCoder coder) : base(coder)
                 {
                 }
+
+				public override void SetContentSize(SizeF aSize)
+				{
+					base.SetContentSize(aSize);
+				}
+
         }
 }
 
