@@ -177,9 +177,9 @@ namespace PlayScript.Application.OSX
 			GL.ClearColor (0.2f,0.2f,0.2f, 0.0f);
 			GL.Clear (ClearBufferMask.ColorBufferBit | ClearBufferMask.DepthBufferBit | ClearBufferMask.StencilBufferBit);
 
-			// Delegate to the scene object for rendering
-			player.OnFrame(Bounds);
-			
+			// run the player
+			player.RunUntilPresent(Bounds);
+
 			openGLContext.FlushBuffer ();
 			
 			openGLContext.CGLContext.Unlock ();

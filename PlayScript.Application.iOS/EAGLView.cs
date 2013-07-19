@@ -166,18 +166,9 @@ namespace PlayScript.Application.iOS
 
 		protected void InitPlayer()
 		{
-			flash.display3D.Context3D.OnPresent = this.OnPresent;
-
 			// create player
 			var rect = GetScaledFrame();
 			mPlayer = new PlayScript.Player(rect);
-		}
-
-		private bool mPresent = false;
-		protected void OnPresent(flash.display3D.Context3D context)
-		{
-			mPresent = true;
-//			SwapBuffers ();			
 		}
 
 		protected override void OnRenderFrame (FrameEventArgs e)
@@ -186,19 +177,15 @@ namespace PlayScript.Application.iOS
 			
 			MakeCurrent ();
 
-			mPresent = false;
-
 			if (mPlayer != null) {
-				// resize player every frame
+				// run the player
 				var rect = GetScaledFrame();
-				mPlayer.OnFrame(rect);
+				mPlayer.RunUntilPresent(rect);
 			}
 
-			if (mPresent == true) {
-				PlayScript.Profiler.Begin("swap");
-				SwapBuffers ();
-				PlayScript.Profiler.End("swap");
-			}
+			PlayScript.Profiler.Begin("swap");
+			SwapBuffers ();
+			PlayScript.Profiler.End("swap");
 		}
 	}
 }
